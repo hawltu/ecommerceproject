@@ -32,7 +32,7 @@ h1, h2{
 	padding-top:50px;
 }
 .bar{
-	background-image:url("background.jpg");
+	background-image:url("assets/images/background.jpg");
 	height:600px;
 	background-size:cover;
 

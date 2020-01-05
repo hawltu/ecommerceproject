@@ -91,7 +91,7 @@ input::selection {
   margin-left:auto;
   margin-right:auto; 
   background: transparent;
-  background-image:url("background2.jpg");
+  background-image:url("assets/images/background2.jpg");
 }
 
 select,
