@@ -31,6 +31,6 @@ func main() {
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/about", about)
 	mux.HandleFunc("/login", login)
-	mux.HandleFunc("/register.html", register)
+	mux.HandleFunc("/register", register)
 	http.ListenAndServe("Localhost:8080", mux)
 }
