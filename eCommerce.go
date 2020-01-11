@@ -22,7 +22,7 @@ const (
 	dbname   = "user1"
 )
 
-var tmplate = template.Must(template.ParseGlob("ui/templates/*"))
+var tmplate = template.Must(template.ParseGlob("templates/*"))
 
 func register(w http.ResponseWriter, r *http.Request) {
 	tmplate.ExecuteTemplate(w, "register1.html", nil)
