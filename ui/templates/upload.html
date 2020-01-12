@@ -1,34 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-	<meta content="Ethiopian" charset="utf-8" />
-	<title>eCommerce</title>
-	<link rel="stylesheet" href="assets/form.css" type="text/css">
-	
-</head>
+	<head>
+		<meta content="Ethiopian" charset="utf-8" />
+		<title>eCommerce</title>
+		<link rel="stylesheet" href="assets/css/form.css" type="text/css">
+	</head>
 <body>
-	
-	<form method="POST"   action="/upload" enctype="multipart/form-data">
-		<input type="image" name="image">
-		<br>
-		Catagory:<br><input type="text" name="catagory" hint = "Women Men Kids or Technology">
-		<br>
-		subcatagory:
-		<br>
-		<input type="text" name="subCatagory">
-		<br>
-		price:<br><input type="text" name="price" hint ="price of item">
-		<br>
-		<br>
-		quantity:<br><input type="number" name="quantity" hint ="price of item">
-		<br>
-		name:<br><input type="text" name="name" hint = "name of item">
-		<br>
-
-		<input type="submit" name="submit" value="Submit">
-
+<div class="body-content">
+  <div class="logout" style="float: right; margin:0 10px;"><a href="logout.php">LogOut</a></div>
+  <div class="module">
+    <h1>Upload your product	</h1>
+    <form class="form" action="upload2.php" method="post" enctype="multipart/form-data" autocomplete="off">
+       <div class="alert alert-error"></div>
+       <input type="file" name="image" placeholder="Insert Image"value="Insert Image" required /><br>
+       <input type="text" name="named" placeholder = "name of item" required />
+       <input type="number" name="price" placeholder ="price of item" required />
+       <input type="text" name="catagory" placeholder = "Women Men Kids or Technology" required />
+       <input type="text" name="subcatagory" placeholder = "Cloth Shoes Cosmetics Watch Phone Pc Tv....." required />
+      <input type="submit" value="upload"  name="submit" class="btn btn-block btn-primary" />
     </form>
-    
+  </div>
+</div>
 
 </body>
 </html>

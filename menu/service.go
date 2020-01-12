@@ -3,6 +3,7 @@ package menu
 import "github.com/hawltu/project1/entity"
 
 // CategoryService specifies food menu category services
+<<<<<<< HEAD
 type UserService interface {
 	Users() ([]entity.User, error)
 	User(id int) (entity.User, error)
@@ -22,3 +23,12 @@ type ItemService interface {
 
 
 
+=======
+type CategoryService interface {
+	users() ([]entity.User, error)
+	User(id int) (entity.User, error)
+	UpdateUser(user entity.User) error
+	DeleteUser(id int) error
+	StoreUser(user entity.User) error
+}
+>>>>>>> c88e25e2abc34e1c0b678c5686509ebca8fed30c
