@@ -15,10 +15,6 @@ func NewUserRepositoryImpl(Conn *sql.DB) *UserRepositoryImpl {
 	return &UserRepositoryImpl{conn: Conn}
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> c88e25e2abc34e1c0b678c5686509ebca8fed30c
 func (cri *UserRepositoryImpl) Users() ([]entity.User, error) {
 
 	rows, err := cri.conn.Query("SELECT * FROM  user1;")
