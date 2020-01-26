@@ -1,4 +1,4 @@
-package menu
+package Item
 
 import "github.com/hawltu/project1/entity"
 
@@ -8,11 +8,4 @@ type ItemRepository interface {
 	UpdateItem(item entity.Item) error
 	DeleteItem(id int) error
 	StoreItem(item entity.Item) error
-}
-type UserRepository interface {
-	Users() ([]entity.User, error)
-	User(id int) (entity.User, error)
-	UpdateUser(user entity.User) error
-	DeleteUser(id int) error
-	StoreUser(user *entity.User) error
 }

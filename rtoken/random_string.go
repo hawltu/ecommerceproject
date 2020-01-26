@@ -1,37 +1,68 @@
 package rtoken
 
 import (
-	"crypto/rand"
-	"encoding/base64"
-	mrand "math/rand"
-	"time"
+	"github.com/dgrijalva/jwt-go"
 )
 
-// GenerateRandomBytes returns securely generated random bytes.
-func GenerateRandomBytes(n int) ([]byte, error) {
-	mrand.Seed(time.Now().UnixNano())
-	b := make([]byte, n)
-	_, err := rand.Read(b)
+// CustomClaims specifies custom claims
+type CustomClaims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
+}
+
+// Generate generates jwt token
+func Generate(signingKey []byte, claims jwt.Claims) (string, error) {
+	tn := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedString, err := tn.SignedString(signingKey)
+	return signedString, err
+}
+
+// Valid validates a given token
+func Valid(signedToken string, signingKey []byte) (bool, error) {
+	token, err := jwt.ParseWithClaims(signedToken, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return signingKey, nil
+	})
+
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return b, nil
+
+	if _, ok := token.Claims.(*CustomClaims); !ok || !token.Valid {
+		return false, err
+	}
+
+	return true, nil
 }
 
-// GenerateRandomString returns a URL-safe, base64 encoded securely generated random string.
-func GenerateRandomString(s int) (string, error) {
-	b, err := GenerateRandomBytes(s)
-	return base64.URLEncoding.EncodeToString(b), err
+// Claims returns claims used for generating jwt tokens
+func Claims(email string, tokenExpires int64) jwt.Claims {
+	return CustomClaims{
+		email,
+		jwt.StandardClaims{
+			ExpiresAt: tokenExpires,
+		},
+	}
 }
 
-// GenerateRandomID generates random id for a session
-func GenerateRandomID(s int) string {
-	mrand.Seed(time.Now().UnixNano())
-
-	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, s)
-	for i := range b {
-		b[i] = letterBytes[mrand.Int63()%int64(len(letterBytes))]
+// CSRFToken Generates random string for CSRF
+func CSRFToken(signingKey []byte) (string, error) {
+	tn := jwt.New(jwt.SigningMethodHS256)
+	signedString, err := tn.SignedString(signingKey)
+	if err != nil {
+		return "", err
 	}
-	return string(b)
+	return signedString, nil
+}
+
+// ValidCSRF checks if a given csrf token is valid
+func ValidCSRF(signedToken string, signingKey []byte) (bool, error) {
+	token, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
+		return signingKey, nil
+	})
+
+	if err != nil || !token.Valid {
+		return false, err
+	}
+
+	return true, nil
 }

@@ -3,15 +3,16 @@ package service
 import (
 	"github.com/hawltu/project1/entity"
 	"github.com/hawltu/project1/menu"
+	"github.com/hawltu/project1/item"
 )
 
 // ItemServiceImpl implements menu.ItemService interface
 type ItemServiceImpl struct {
-	ItemRepo menu.ItemRepository
+	ItemRepo item.ItemRepository
 }
 
 // NewItemServiceImpl will create new ItemService object
-func NewItemServiceImpl(CatRepo menu.ItemRepository) *ItemServiceImpl {
+func NewItemServiceImpl(CatRepo item.ItemRepository) *ItemServiceImpl {
 	return &ItemServiceImpl{ItemRepo: CatRepo}
 }
 
@@ -23,7 +24,6 @@ func (cs *ItemServiceImpl) Items() ([]entity.Item, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return Items, nil
 }
 
@@ -35,7 +35,6 @@ func (cs *ItemServiceImpl) StoreItem(Item entity.Item) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -47,7 +46,6 @@ func (cs *ItemServiceImpl) Item(id int) (entity.Item, error) {
 	if err != nil {
 		return c, err
 	}
-
 	return c, nil
 }
 
