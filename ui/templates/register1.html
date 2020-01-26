@@ -12,14 +12,17 @@
     <h1>WELCOME	</h1>
     <form class="form" action="/register"  method="POST" enctype="multipart/form-data" autocomplete="off">
        <div class="alert alert-error"></div>
-       <input type="file" name="image">
-       <input type="text" placeholder="Full Name" name="fullname" required />
-       <input type="text" placeholder="User Name" name="username" required />
+       <input type="text" placeholder="FName" name="fname" required />
+       <input type="text" placeholder="LName" name="lname" required />
        <input type="email" placeholder="Email" name="email" required />
+       
+       <input type="text" placeholder="UserName" name="username" required />
        <input type="password" placeholder="Password" name="password" required />
 	     <input type="text" placeholder="Mobile_No" name="Mobile" required />
        <input type="text" placeholder="Shop Name" name="shopname" required />
        <input type="text" placeholder="address" name="address" required />
+
+       <input type="file" placeholder="image"   name="image" />
       <input type="submit" value="Register" name="register" class="btn btn-block btn-primary" />
     </form>
   </div>

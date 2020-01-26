@@ -27,7 +27,7 @@ func (cri *UserRepositoryImpl) Users() ([]entity.User, error) {
 
 	for rows.Next() {
 		user := entity.User{}
-		err = rows.Scan(&user.Username, &user.Fname, &user.Lname, &user.Password)
+		err = rows.Scan(&user.UserName, &user.FName, &user.LName, &user.Password,&user.ID,&user.Email,&user.Mobile,&user.Address,&user.Image,&user.Shopname)
 		if err != nil {
 			return nil, err
 		}
@@ -35,6 +35,8 @@ func (cri *UserRepositoryImpl) Users() ([]entity.User, error) {
 	}
 
 	return ctgs, nil
+
+
 }
 
 func (cri *UserRepositoryImpl) User(id int) (entity.User, error) {
@@ -43,7 +45,7 @@ func (cri *UserRepositoryImpl) User(id int) (entity.User, error) {
 
 	c := entity.User{}
 
-	err := row.Scan(&c.Fname, &c.Lname, &c.Username, &c.Password)
+	err := row.Scan(&c.UserName, &c.FName, &c.LName, &c.Password,&c.ID,&c.Email,&c.Mobile,&c.Address,&c.Image,&c.Shopname)
 
 	if err != nil {
 		return c, err
@@ -51,11 +53,9 @@ func (cri *UserRepositoryImpl) User(id int) (entity.User, error) {
 
 	return c, nil
 }
+func (cri *UserRepositoryImpl) UpdateUser(c entity.User) error {
 
-
-func (cri *UserRepositoryImpl) UpdateUser(c entity.UserUser) error {
-
-	_, err := cri.conn.Exec("UPDATE user1 SET name=$1,description=$2, image=$3 WHERE id=$4", c.fname, c.username, c.password, c.ID)
+	_, err := cri.conn.Exec("UPDATE user1 SET name=$1,description=$2, image=$3 WHERE id=$4", c.FName, c.UserName, c.Password, c.ID)
 	if err != nil {
 		return errors.New("Update has failed")
 	}
@@ -78,7 +78,7 @@ func (cri *UserRepositoryImpl) DeleteUser(id int) error {
 
 func (cri *UserRepositoryImpl) StoreUser(c entity.User) error {
 
-	_, err := cri.conn.Exec("INSERT INTO user1 (fname,username,password) values($1, $2, $3)", c.Fname, c.Username, c.Password)
+	_, err := cri.conn.Exec("INSERT INTO user1 (fname,username,password) values($1, $2, $3)", c.FName, c.UserName, c.Password)
 
 	if err != nil {
 		return errors.New("Insertion has failed")
@@ -86,3 +86,4 @@ func (cri *UserRepositoryImpl) StoreUser(c entity.User) error {
 
 	return nil
 }
+

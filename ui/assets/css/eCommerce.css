@@ -2,7 +2,7 @@
 	margin:0;
 	padding:0;
 }
-a{
+a {
 	text-decoration:none;
 	color:white;
 
@@ -32,7 +32,7 @@ h1, h2{
 	padding-top:50px;
 }
 .bar{
-	background-image:url("/assets/image/IMG_20180328_134425.jpg");
+	background-image:url("background.jpg");
 	height:600px;
 	background-size:cover;
 

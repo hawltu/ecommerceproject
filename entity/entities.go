@@ -5,7 +5,7 @@ import (
 )
 type User struct {
 	gorm.Model
-	ID        uint `gorm:"type:integer;not null"`
+	//ID        uint `gorm:"type:integer;not null"`
 	LName     string `gorm:"type:varchar(255);not null"`
 	FName     string `gorm:"type:varchar(255);not null"`
 	Email     string `gorm:"type:varchar(255);not null"`
@@ -20,7 +20,7 @@ type User struct {
 // UserSession represents user sessions
 type UserSession struct {
 	gorm.Model
-	ID         uint
+	//ID         uint 
 	UserID     uint
 	UUID       string `gorm:"type:varchar(255);not null"`
 	Expires    int64  `gorm:"type:varchar(255);not null"`
@@ -28,11 +28,11 @@ type UserSession struct {
 }
 type Item struct {
 	gorm.Model
-	id          int    `gorm:"type:integer;not null"`
-	name        string  `gorm:"type:varchar(255);not null"`
-	catagory    string  `gorm:"type:varchar(255);not null"`
-	subcatagory string  `gorm:"type:varchar(255);not null"`
-	price       float32  `gorm:"type:varchar(255);not null"`
-	quantity    int     `gorm:"type:integer;not null"`   
-	image       string  `gorm:"type:varchar(255);not null"`
+	//ID          int    
+	Name        string  `gorm:"type:varchar(255);not null"`
+	Catagory    string  `gorm:"type:varchar(255);not null"`
+	Subcatagory string  `gorm:"type:varchar(255);not null"`
+	Price       float32  `gorm:"type:varchar(255);not null"`
+	Quantity    int     `gorm:"type:integer;not null"`   
+	Image       string  `gorm:"type:varchar(255);not null"`
 }

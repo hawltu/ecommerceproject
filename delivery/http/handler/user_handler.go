@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-
-	"github.com/amthesonofGod/Notice-Board/user"
+	"os"
+	"io"
+	"mime/multipart"
+	"path/filepath"
 	"github.com/hawltu/project1/entity"
+	"github.com/hawltu/project1/user"
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/hawltu/project1/session"
-
 	"github.com/hawltu/project1/item"
 	// "github.com/amthesonofGod/Notice-Board/rtoken"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,7 +38,6 @@ var ctxUserSessionKey = contextKey("signed_in_user_session")
 func NewUserHandler(T *template.Template, US user.UserService, PS item.ItemService, sessServ user.SessionService, usrSess *entity.UserSession) *UserHandler {
 	return &UserHandler{tmpl: T, userSrv: US, postSrv: PS, sessionService: sessServ, userSess: usrSess}
 }
-
 // Authenticated checks if a user is authenticated to access a given route
 func (uh *UserHandler) Authenticated(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -80,11 +80,9 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		users, _ := uh.userSrv.Users()
 
-		
 		for _, user := range users {
 			if email == user.UserName {
-				err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-				if err == bcrypt.ErrMismatchedHashAndPassword {
+				if errc == bcrypt.ErrMismatchedHashAndPassword {
 					fmt.Println("Your username or password is wrong")
 					return
 				}
@@ -118,7 +116,8 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 				http.SetCookie(w, cookie)
 				fmt.Println(cookie.Value)
-				http.Redirect(w, r, "/home", http.StatusSeeOther)
+				//uh.tmpl.ExecuteTemplate(w,"loggedin.html",nil)
+				http.Redirect(w, r, "/log", http.StatusSeeOther)
 				break
 			} else {
 				fmt.Println("user not found")
@@ -127,7 +126,7 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
-		uh.tmpl.ExecuteTemplate(w, "loggedin.html", nil)
+		uh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 	}
 }
 
@@ -155,16 +154,35 @@ func (uh *UserHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 
 		usr := &entity.User{}
-		usr.Name = r.FormValue("username")
-		usr.Email = r.FormValue("useremail")
-		password := r.FormValue("userpassword")
-		// confirmpass := r.FormValue("confirmPassword")
+         
+        usr.Mobile = r.FormValue("Mobile")
+		usr.FName = r.FormValue("fname")
+		usr.LName = r.FormValue("lname")
+		usr.Email = r.FormValue("email")
+		usr.UserName = r.FormValue("username")
+		password := r.FormValue("password")
+		usr.Shopname = r.FormValue("shopname")
+		usr.Address   = r.FormValue("address")
+		//usr.Image   = r.FormValue("image")
+		//confirmpass := r.FormValue("confirmPassword")
+
+		mf, fh, err := r.FormFile("image")
+
+		if err != nil {
+			panic(err)
+		}
+
+		defer mf.Close()
+
+		usr.Image = fh.Filename
+
+		writeFile(&mf, fh.Filename)
 
 		users, _ := uh.userSrv.Users()
 
 		for _, user := range users {
 
-			if usr.Email == user.Email {
+			if usr.UserName == user.UserName {
 				http.Redirect(w, r, "/", http.StatusSeeOther)
 				fmt.Println("This Email is already in use! ")
 				return
@@ -179,11 +197,9 @@ func (uh *UserHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		
 		usr.Password = string(hashedPassword)
 
 		fmt.Println(usr.Password)
-
 		_, errs := uh.userSrv.StoreUser(usr)
 
 		if len(errs) > 0 {
@@ -214,10 +230,11 @@ func (uh *UserHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("User added to db")
 
 		http.SetCookie(w, cookie)
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		uh.tmpl.ExecuteTemplate(w, "login.html", nil)
+		//http.Redirect(w, r, "/home", http.StatusSeeOther)
 
 	} else {
-		uh.tmpl.ExecuteTemplate(w, "index_signin_signup.html", nil)
+		uh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 	}
 
 }
@@ -232,9 +249,9 @@ func (uh *UserHandler) Home(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	posts, _ := uh.postSrv.Posts()
+	//posts, _ := uh.postSrv.Posts()
 
-	uh.tmpl.ExecuteTemplate(w, "home.layout", posts)
+	uh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 }
 
 // Logout hanldes the POST /logout requests
@@ -244,3 +261,39 @@ func (uh *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	// uh.sessionService.DeleteSession(userSess.UUID)
 	// http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+
+func writeFile(mf *multipart.File, fname string) {
+
+	wd, err := os.Getwd()
+
+	if err != nil {
+		panic(err)
+	}
+
+	path := filepath.Join(wd, "../../", "ui", "assets", "image", fname)
+	image, err := os.Create(path)
+
+	/*if err != nil {
+		panic(err)
+	}*/
+	defer image.Close()
+	io.Copy(image, *mf)
+}
+
+
+func (uh *UserHandler) LoggedInn(w http.ResponseWriter, r *http.Request) {
+
+	//get cookie
+	_, err := r.Cookie("session")
+	if err != nil {
+		fmt.Println("no cookie")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+	//user, _ := uh.userSrv.Users()
+
+	uh.tmpl.ExecuteTemplate(w, "register.html", nil)
+}
+
+//

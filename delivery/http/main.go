@@ -13,8 +13,8 @@ import (
 	repository "github.com/hawltu/project1/user/repository"
 	service "github.com/hawltu/project1/user/service"
 
-	repositoryCamp "github.com/amthesonofGod/Notice-Board/company/repositoryCamp"
-	serviceCamp "github.com/amthesonofGod/Notice-Board/company/serviceCamp"
+	//repositoryCamp "github.com/amthesonofGod/Notice-Board/company/repositoryCamp"
+	//serviceCamp "github.com/amthesonofGod/Notice-Board/company/serviceCamp"
 
 	postRepos "github.com/hawltu/project1/item/repository"
 	postServ "github.com/hawltu/project1/item/service"
@@ -27,7 +27,7 @@ import (
 
 	"github.com/hawltu/project1/delivery/http/handler"
 
-	"github.com//hawltu/project1/rtoken"
+	"github.com/hawltu/project1/rtoken"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -41,6 +41,16 @@ const (
 	password = "hawltu"
 	dbname   = "user1"
 )
+func createTables(dbconn *gorm.DB) []error {
+
+	// dbconn.DropTableIfExists(&entity.CompanySession{}, &entity.UserSession{})
+	// errs := dbconn.CreateTable( &entity.Request{}, &entity.Application{}).GetErrors()
+	errs := dbconn.CreateTable(&entity.Item{}, &entity.UserSession{}, &entity.User{}).GetErrors()
+	if errs != nil {
+		return errs
+	}
+	return nil
+}
 
 func main() {
 
@@ -56,9 +66,11 @@ func main() {
 	
 	defer dbconn.Close()
 
-	if err := dbconn.Ping(); err != nil {
+	createTables(dbconn)
+
+	/*if err := dbconn.Ping(); err != nil {
 		panic(err)
-	}
+	}*/
 
 	tmpl := template.Must(template.ParseGlob("ui/templates/*"))
 
@@ -70,14 +82,14 @@ func main() {
 	userSessionsrv := service.NewSessionService(userSessionRepo)
 
 	postRepo := postRepos.NewItemGormRepo(dbconn)
-	postSrv := postServ.ItemServiceImpl(postRepo)
+	postSrv := postServ.NewItemServiceImpl(postRepo)
 
 	userRepo := repository.NewUserGormRepo(dbconn)
 	userSrv := service.NewUserService(userRepo)
 	sess := configSess()
 
-	userHandler := handler.NewUserHandler(tmpl, userSrv, postSrv, userSessionsrv, sess)
-
+	userHandler := handler.NewUserHandler(tmpl, userSrv, postSrv,userSessionsrv,sess)
+	menuHandler := handler.NewMenuHandler(tmpl,userSrv)
 	/*adminCatgHandler := handler.NewUserHanlder(tmpl, userServ)
 	menuHandler := handler.NewMenuHandler(tmpl, userServ)
 
@@ -104,5 +116,26 @@ func main() {
 	fs := http.FileServer(http.Dir("ui/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	http.HandleFunc("/",userHandler.Index)
+	http.HandleFunc("/login.html",menuHandler.Loging)
+	http.HandleFunc("/register.html",menuHandler.Register)
+	http.HandleFunc("/login",userHandler.Login)
+	http.HandleFunc("/log",userHandler.LoggedInn)
+	http.HandleFunc("/register",userHandler.CreateAccount)
 	http.ListenAndServe(":8181", nil)
+}
+
+func configSess() *entity.UserSession {
+	tokenExpires := time.Now().Add(time.Minute * 30).Unix()
+	sessionID := rtoken.GenerateRandomID(32)
+	signingString, err := rtoken.GenerateRandomString(32)
+	if err != nil {
+		panic(err)
+	}
+	signingKey := []byte(signingString)
+
+	return &entity.UserSession{
+		Expires:    tokenExpires,
+		SigningKey: signingKey,
+		UUID:       sessionID,
+	}
 }

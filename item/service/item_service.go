@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/hawltu/project1/entity"
-	"github.com/hawltu/project1/menu"
-	"github.com/hawltu/project1/item"
+	//"github.com/hawltu/project1/user"
+	 "github.com/hawltu/project1/item"
 )
 
 // ItemServiceImpl implements menu.ItemService interface
@@ -11,8 +11,10 @@ type ItemServiceImpl struct {
 	ItemRepo item.ItemRepository
 }
 
+
+//
 // NewItemServiceImpl will create new ItemService object
-func NewItemServiceImpl(CatRepo item.ItemRepository) *ItemServiceImpl {
+func NewItemServiceImpl(CatRepo item.ItemRepository) item.ItemService {
 	return &ItemServiceImpl{ItemRepo: CatRepo}
 }
 

@@ -2,6 +2,9 @@
 	margin:0;
 	padding:0;
 }
+body{
+	height:2000px;
+}
 .bar{
 	background-image:url("images/background.jpg");
 	height:300px;
@@ -21,10 +24,9 @@ a{
 }
 button{
 	float:left;
-	border-radius:10px;
-	width:200px;
+	width:100px;
 	height:30px;
-	background-color:rgb(138,43,226);
+	background-color:rgb(128,0,0);
 	color:white;
 }
 .bar li{
@@ -48,18 +50,23 @@ h2{
 }
 .pill {
     width: 300px;
-    height:auto;
+	height:auto;
     float: left;
     margin: 0 10px;  
 	padding:10px;
 }
 .caption{
+	background-color:lightgrey;
+}
+.price{
 	float:left;
-}
-.caption p{
 	padding: 10px;
-	padding-left:0px;
 }
+.shop{
+	float:left;
+	padding: 10px;
+}
+
 .container img{
 	width: 300px;
 	height:auto;

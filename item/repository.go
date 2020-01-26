@@ -1,4 +1,4 @@
-package Item
+package item
 
 import "github.com/hawltu/project1/entity"
 

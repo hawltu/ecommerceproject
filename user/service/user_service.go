@@ -33,6 +33,8 @@ func (us *UserService) StoreUser(user *entity.User) (*entity.User, []error) {
 	usr, errs := us.userRepo.StoreUser(user)
 
 	if len(errs) > 0 {
+		return nil,errs
+	}
 
 	return usr, nil
 }
