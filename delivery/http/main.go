@@ -18,6 +18,7 @@ import (
 
 	postRepos "github.com/hawltu/project1/item/repository"
 	postServ "github.com/hawltu/project1/item/service"
+	"github.com/julienschmidt/httprouter"
 
 	//appRepos "github.com/amthesonofGod/Notice-Board/application/repository"
 	//appServ "github.com/amthesonofGod/Notice-Board/application/service"
@@ -26,7 +27,7 @@ import (
 	//reqServ "github.com/amthesonofGod/Notice-Board/request/service"
 
 	"github.com/hawltu/project1/delivery/http/handler"
-
+	//"github.com/hawltu/project1/delivery/http/handler/api"
 	"github.com/hawltu/project1/rtoken"
 
 	"github.com/jinzhu/gorm"
@@ -41,6 +42,11 @@ const (
 	password = "hawltu"
 	dbname   = "user1"
 )
+var tmpl *template.Template
+func init() {
+	tmpl = template.Must(template.ParseGlob("ui/templates/*"))
+}
+
 func createTables(dbconn *gorm.DB) []error {
 
 	// dbconn.DropTableIfExists(&entity.CompanySession{}, &entity.UserSession{})
@@ -68,16 +74,12 @@ func main() {
 
 	createTables(dbconn)
 
-	/*if err := dbconn.Ping(); err != nil {
-		panic(err)
-	}*/
-
-	tmpl := template.Must(template.ParseGlob("ui/templates/*"))
-
-	/*userRepo := repository.NewUserRepositoryImpl(dbconn)
-	userServ := service.NewUserServiceImpl(userRepo)
-	userHandler := handler.NewUserHandler()*/
 	
+
+
+
+
+	csrfSignKey := []byte(rtoken.GenerateRandomID(32))
     userSessionRepo := repository.NewSessionGormRepo(dbconn)
 	userSessionsrv := service.NewSessionService(userSessionRepo)
 
@@ -88,39 +90,60 @@ func main() {
 	userSrv := service.NewUserService(userRepo)
 	sess := configSess()
 
-	userHandler := handler.NewUserHandler(tmpl, userSrv, postSrv,userSessionsrv,sess)
+	userHandler := handler.NewUserHandler(tmpl, userSrv, postSrv,userSessionsrv,sess,csrfSignKey)
 	menuHandler := handler.NewMenuHandler(tmpl,userSrv)
-	/*adminCatgHandler := handler.NewUserHanlder(tmpl, userServ)
-	menuHandler := handler.NewMenuHandler(tmpl, userServ)
+	itemHandler := handler.NewItemrHandler(tmpl,postSrv,userSrv,csrfSignKey)
+	cmtHandl :=    handler.NewUserHandler1(userSrv)
+	cmtHand2 :=    handler.NewItemHandler1(postSrv)
+	router := httprouter.New()
 
-	itemRepo := repository.NewItemRepositoryImpl(dbconn)
-	itemServ := service.NewItemServiceImpl(itemRepo)
+    router.GET("/v1/users", cmtHandl.GetUsers)
+	router.GET("/v1/users/:id", cmtHandl.GetUser)
+	router.PUT("/v1/users/:id", cmtHandl.PutUser)
+	router.DELETE("/v1/users/:id", cmtHandl.DeleteUser)
+	router.POST("/v1/users", cmtHandl.PostUser)
 
-	itemCatHandler := handler.NewItemHandler(tmpl,itemServ)
-	fs := http.FileServer(http.Dir("ui/assets"))
-	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
+	router.GET("/v1/items", cmtHand2.GetItems)
+	router.GET("/v1/items/:id", cmtHand2.GetItem)
+	router.PUT("/v1/items/:id", cmtHand2.PutItem)
+	router.POST("/v1/items", cmtHandl.PostUser)
 
-	http.HandleFunc("/", menuHandler.Index)
-	http.HandleFunc("/register.html",menuHandler.register)
-	http.HandleFunc("/eCommerce.html",)
-	http.HandleFunc("/about", menuHandler.about)
-	//http.HandleFunc("/contact_us.html", menuHandler.contact)
-	http.HandleFunc("/men", menuHandler.mennn)
-	http.HandleFunc("/women",menuHandler.women)
-	http.HandleFunc("/login.html",menuHandler.login)
-	http.HandleFunc("/register", adminCatgHandler.CreateAccount)
-	http.HandleFunc("/login",adminCatgHandler.Login)
-	http.HandleFunc("/",adminCatgHandler.Index)
-	http.HandleFunc("/upload.html",menuHandler.upload)
-	http.HandleFunc("/upload",itemCatHandler.uploadedItem)*/
+
+
+
+
+
+
 	fs := http.FileServer(http.Dir("ui/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	http.HandleFunc("/",userHandler.Index)
 	http.HandleFunc("/login.html",menuHandler.Loging)
 	http.HandleFunc("/register.html",menuHandler.Register)
-	http.HandleFunc("/login",userHandler.Login)
+	http.HandleFunc("/men.html",itemHandler.ItemByCatagoryMen)
+	http.HandleFunc("/kids.html",itemHandler.ItemByCatagoryKid)
+	http.HandleFunc("/women.html",itemHandler.ItemByCatagoryWomen)
+	http.HandleFunc("/tech.html",itemHandler.ItemByCatagoryTech)
+	http.HandleFunc("/login",userHandler.Loginn)
+	http.HandleFunc("/upload.html",menuHandler.Upload)
+	http.HandleFunc("/eCommerce.html",menuHandler.Home)
+	http.HandleFunc("/upload",itemHandler.UploadItem)
+	http.HandleFunc("/update.html",itemHandler.ItemUpdate)
 	http.HandleFunc("/log",userHandler.LoggedInn)
+	http.HandleFunc("/about.html",menuHandler.About)
+	http.HandleFunc("/item/update",itemHandler.ItemUpdate)
+	//http.HandleFunc("/item/update",menuHandler.Update)
+	//http.HandleFunc()()
+	http.HandleFunc("/registerr",itemHandler.Logingg)
+	http.HandleFunc("/men/buy",itemHandler.ItemBuyMen)
+	http.HandleFunc("/women/buy",itemHandler.ItemBuyMen)
+	http.HandleFunc("/kids/buy",itemHandler.ItemBuyMen)
+	http.HandleFunc("/tech/buy",itemHandler.ItemBuyMen)
+	http.HandleFunc("/buy",itemHandler.Buy)
+	//http.HandleFunc("/item/delete",itemHandler.Deleting)
+	http.HandleFunc("/item/delete",itemHandler.ItemDelete)
+
 	http.HandleFunc("/register",userHandler.CreateAccount)
+	//http.ListenAndServe(":8181", router)
 	http.ListenAndServe(":8181", nil)
 }
 

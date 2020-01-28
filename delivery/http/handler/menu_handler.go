@@ -20,33 +20,25 @@ func (mh *MenuHandler) Index(w http.ResponseWriter, r *http.Request) {
 	mh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 }
 
-func (mh *MenuHandler) about(w http.ResponseWriter, r *http.Request) {
+func (mh *MenuHandler) About(w http.ResponseWriter, r *http.Request) {
+	mh.tmpl.ExecuteTemplate(w, "about.html", nil)
 }
-func (mh *MenuHandler) women(w http.ResponseWriter, r *http.Request) {
-	mh.tmpl.ExecuteTemplate(w, "women.html", nil)
-}
+
 func (mh *MenuHandler) Register(w http.ResponseWriter, r *http.Request) {
 	mh.tmpl.ExecuteTemplate(w, "register1.html", nil)
 }
-func (mh *MenuHandler) mennn(w http.ResponseWriter, r *http.Request) { 
+func (mh *MenuHandler) Men(w http.ResponseWriter, r *http.Request) { 
 	mh.tmpl.ExecuteTemplate(w, "men.html", nil)
 }
 func (mh *MenuHandler) Loging(w http.ResponseWriter, r *http.Request) {
 		mh.tmpl.ExecuteTemplate(w, "login.html", nil)
 }
-func (mh *MenuHandler) tech(w http.ResponseWriter, r *http.Request) {
-	mh.tmpl.ExecuteTemplate(w, "tech.html", nil)
-}
-func (mh *MenuHandler) upload(w http.ResponseWriter, r *http.Request){
+func (mh *MenuHandler) Upload(w http.ResponseWriter, r *http.Request){
 	mh.tmpl.ExecuteTemplate(w, "upload.html", nil)
 }
-func (mh *MenuHandler)  kids(w http.ResponseWriter, r *http.Request) {
-	mh.tmpl.ExecuteTemplate(w, "kids.html", nil)
-}
-func (mh *MenuHandler) home(w http.ResponseWriter, r *http.Request) {
+func (mh *MenuHandler) Home(w http.ResponseWriter, r *http.Request) {
 	mh.tmpl.ExecuteTemplate(w, "eCommerce.html",nil)
 }
-/*func (mh *MenuHandler) upload(w http.ResponseWriter, r *http.Request){
-	mh.tmpl.ExecuteTemplate(w, "upload.html", nil)
-}*/
- 
+func (mh *MenuHandler) Update(w http.ResponseWriter, r *http.Request) {
+	mh.tmpl.ExecuteTemplate(w, "update.html",nil)
+}

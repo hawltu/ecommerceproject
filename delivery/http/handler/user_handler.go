@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"os"
 	"io"
 	"mime/multipart"
@@ -14,6 +15,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/hawltu/project1/session"
+	
+	"github.com/hawltu/project1/form"
+	
+	"github.com/hawltu/project1/rtoken"
 	"github.com/hawltu/project1/item"
 	// "github.com/amthesonofGod/Notice-Board/rtoken"
 	"golang.org/x/crypto/bcrypt"
@@ -27,7 +32,7 @@ type UserHandler struct {
 	sessionService user.SessionService
 	userSess       *entity.UserSession
 	loggedInUser   *entity.User
-	//csrfSignKey    []byte
+	csrfSignKey    []byte
 }
 
 type contextKey string
@@ -35,9 +40,37 @@ type contextKey string
 var ctxUserSessionKey = contextKey("signed_in_user_session")
 
 // NewUserHandler initializes and returns new NewUserHandler
-func NewUserHandler(T *template.Template, US user.UserService, PS item.ItemService, sessServ user.SessionService, usrSess *entity.UserSession) *UserHandler {
-	return &UserHandler{tmpl: T, userSrv: US, postSrv: PS, sessionService: sessServ, userSess: usrSess}
+func NewUserHandler(T *template.Template, US user.UserService, PS item.ItemService, sessServ user.SessionService, usrSess *entity.UserSession,csKey []byte) *UserHandler {
+	return &UserHandler{tmpl: T, userSrv: US, postSrv: PS, sessionService: sessServ, userSess: usrSess,csrfSignKey: csKey}
 }
+
+func (ach *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	categories, errs := ach.userSrv.Users()
+	if errs != nil {
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	}
+	token, err := rtoken.CSRFToken(ach.csrfSignKey)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+	tmplData := struct {
+		Values     url.Values
+		VErrors    form.ValidationErrors
+	     Users      []entity.User
+		CSRF       string
+	}{
+		Values:     nil,
+		VErrors:    nil,
+		Users: categories,
+		CSRF:       token,
+	}
+	ach.tmpl.ExecuteTemplate(w, "register.html", tmplData)
+}
+
+func CheckPasswordHash(password, hash string) bool {
+     err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+     return err == nil
+ }
 // Authenticated checks if a user is authenticated to access a given route
 func (uh *UserHandler) Authenticated(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -64,13 +97,8 @@ func (uh *UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// func CheckPasswordHash(password, hash string) bool {
-//     err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-//     return err == nil
-// }
-
 // Login handle requests on /login
-func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+/*func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	cookie, errc := r.Cookie("session")
 
@@ -79,16 +107,26 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("username")
 		password := r.FormValue("password")
 		users, _ := uh.userSrv.Users()
-
+		fmt.Println("username from form",email)
 		for _, user := range users {
-			if email == user.UserName {
-				if errc == bcrypt.ErrMismatchedHashAndPassword {
+			/*if email != user.UserName{
+				var x  = "INVALID USERNAME OR PASSWORD"
+				uh.tmpl.ExecuteTemplate(w,"login.html",x)
+				return
+			}*/
+			//err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(r.FormValue("password")))
+			/*if email == user.UserName  {
+				err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(r.FormValue("password")))
+				if err == bcrypt.ErrMismatchedHashAndPassword  {
 					fmt.Println("Your username or password is wrong")
+					var x  = "INVALID USERNAME OR PASSWORD"
+					uh.tmpl.ExecuteTemplate(w,"login.html",x)
 					return
 				}
-
-				// match := CheckPasswordHash(password, user.Password)
-				// fmt.Println("Match:   ", match)
+					
+				
+				match := CheckPasswordHash(password, user.Password)
+				fmt.Println("Match:   ", match)
 
 				if errc == http.ErrNoCookie {
 					sID, _ := uuid.NewV4()
@@ -118,18 +156,17 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(cookie.Value)
 				//uh.tmpl.ExecuteTemplate(w,"loggedin.html",nil)
 				http.Redirect(w, r, "/log", http.StatusSeeOther)
+				//break
 				break
-			} else {
-				fmt.Println("user not found")
-				// http.Redirect(w, r, "/", http.StatusSeeOther)
 			}
+			
 		}
 
 	} else {
 		uh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 	}
 }
-
+*/
 func (uh *UserHandler) loggedIn(r *http.Request) bool {
 	if uh.userSess == nil {
 		return false
@@ -249,18 +286,23 @@ func (uh *UserHandler) Home(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	//posts, _ := uh.postSrv.Posts()
-
 	uh.tmpl.ExecuteTemplate(w, "eCommerce.html", nil)
 }
 
+/*func (uh *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	userSess, _ := r.Context().Value(ctxUserSessionKey).(*entity.Session)
+	session.Remove(userSess.UUID, w)
+	uh.sessionService.DeleteSession(userSess.UUID)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}*/
+
 // Logout hanldes the POST /logout requests
-func (uh *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
+/*func (uh *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	// userSess, _ := r.Context().Value(ctxUserSessionKey).(*entity.Session)
 	// session.Remove(userSess.UUID, w)
 	// uh.sessionService.DeleteSession(userSess.UUID)
 	// http.Redirect(w, r, "/", http.StatusSeeOther)
-}
+}*/
 
 
 func writeFile(mf *multipart.File, fname string) {
@@ -285,15 +327,114 @@ func writeFile(mf *multipart.File, fname string) {
 func (uh *UserHandler) LoggedInn(w http.ResponseWriter, r *http.Request) {
 
 	//get cookie
-	_, err := r.Cookie("session")
+	s, err := r.Cookie("session")
 	if err != nil {
 		fmt.Println("no cookie")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	//user, _ := uh.userSrv.Users()
+	s1, _ := uh.userSrv.Session(s.Value)
+	itms := []entity.Item{}
+	user1,_ := uh.postSrv.Items()
+	for _,tt := range user1{
+		if tt.UserID == s1.UserID {
+			itms = append(itms,tt)
+		}
+	}
+	uh.tmpl.ExecuteTemplate(w, "register.html",itms)
+}
+func (uh *UserHandler) Loginn(w http.ResponseWriter, r *http.Request) {
+	token, err := rtoken.CSRFToken(uh.csrfSignKey)
+	cookie, errc := r.Cookie("session")
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+	if r.Method == http.MethodGet {
+		loginForm := struct {
+			Values  url.Values
+			VErrors form.ValidationErrors
+			CSRF    string
+		}{
+			Values:  nil,
+			VErrors: nil,
+			CSRF:    token,
+		}
+		uh.tmpl.ExecuteTemplate(w, "login.html", loginForm)
+		return
+	}
+	if r.Method == http.MethodPost {
+		// Parse the form data
+		/*err := r.ParseForm()
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}*/
+		//email := r.FormValue("username")
+		//fmt.Println("username from form",email)
+		loginForm := form.Input{Values: r.PostForm, VErrors: form.ValidationErrors{}}
+		
+		user, errs := uh.userSrv.UserByUserName(r.FormValue("username"))
+		
+		
+		if len(errs) > 0 {
+			loginForm.VErrors.Add("generic", "Your username address or password is wrong")
+			uh.tmpl.ExecuteTemplate(w, "login.html", loginForm)
+			return
+		}
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(r.FormValue("password")))
+		if err == bcrypt.ErrMismatchedHashAndPassword {
+			loginForm.VErrors.Add("generic", "Your username address or password is wrong")
+			uh.tmpl.ExecuteTemplate(w, "login.html", loginForm)
+			return
+		}
+		
 
-	uh.tmpl.ExecuteTemplate(w, "register.html", nil)
+		if errc == http.ErrNoCookie {
+			sID, _ := uuid.NewV4()
+			cookie = &http.Cookie{
+				Name:  "session",
+				Value: sID.String(),
+				Path:  "/",
+			}
+		}
+
+		session := &entity.UserSession{}
+		session.UUID = cookie.Value
+		session.UserID = user.ID
+
+		_, errs = uh.userSrv.StoreSession(session)
+		fmt.Println("i am here")
+		if len(errs) > 0 {
+			panic(errs)
+		}
+
+		//fmt.Println(user.Password)
+		//fmt.Println(password)
+
+		fmt.Println("authentication successfull!")
+
+		http.SetCookie(w, cookie)
+		fmt.Println(cookie.Value)
+		///uh.tmpl.ExecuteTemplate(w,"loggedin.html",nil)
+		http.Redirect(w, r, "/log", http.StatusSeeOther)
+
+
+		/*uh.loggedInUser = usr
+		claims := rtoken.Claims(usr.Email, uh.userSess.Expires)
+		session.Create(claims, uh.userSess.UUID, uh.userSess.SigningKey, w)
+		newSess, errs := uh.sessionService.StoreSession(uh.userSess)
+		if len(errs) > 0 {
+			loginForm.VErrors.Add("generic", "Failed to store session")
+			uh.tmpl.ExecuteTemplate(w, "login.layout", loginForm)
+			return
+		}
+		uh.userSess = newSess
+		roles, _ := uh.userService.UserRoles(usr)
+		if uh.checkAdmin(roles) {
+			http.Redirect(w, r, "/admin", http.StatusSeeOther)
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)*/
+	}
 }
 
-//

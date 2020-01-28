@@ -28,11 +28,12 @@ type UserSession struct {
 }
 type Item struct {
 	gorm.Model
-	//ID          int    
+	//ID          int   
 	Name        string  `gorm:"type:varchar(255);not null"`
 	Catagory    string  `gorm:"type:varchar(255);not null"`
 	Subcatagory string  `gorm:"type:varchar(255);not null"`
-	Price       float32  `gorm:"type:varchar(255);not null"`
+	Price       int    `gorm:"type:integer;not null"`
 	Quantity    int     `gorm:"type:integer;not null"`   
 	Image       string  `gorm:"type:varchar(255);not null"`
+	UserID      uint 
 }

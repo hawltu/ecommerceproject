@@ -38,6 +38,13 @@ func (us *UserService) StoreUser(user *entity.User) (*entity.User, []error) {
 
 	return usr, nil
 }
+func (us *UserService) UserByUserName(username string) (*entity.User, []error) {
+	usr, errs := us.userRepo.UserByUserName(username)
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return usr, errs
+}
 
 // User returns a user object with a given id
 func (us *UserService) User(id uint) (*entity.User, []error) {

@@ -1,34 +1,25 @@
-<!DOCTYPE html>
 <html>
-<head>
-	<meta content="Ethiopian" charset="utf-8" />
-	<title>eCommerce</title>
-	<link rel="stylesheet" href="assets/form.css" type="text/css">
-	
-</head>
+	<head>
+		<meta content="Ethiopian" charset="utf-8" />
+		<title>eCommerce</title>
+		<link href="//db.onlinewebfonts.com/c/a4e256ed67403c6ad5d43937ed48a77b?family=Core+Sans+N+W01+35+Light" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" href="assets/css/regiister.css" type="text/css">
+	</head>
 <body>
-	
-	<form method="POST"   action="/upload" enctype="multipart/form-data">
-		<input type="image" name="image">
-		<br>
-		Catagory:<br><input type="text" name="catagory" hint = "Women Men Kids or Technology">
-		<br>
-		subcatagory:
-		<br>
-		<input type="text" name="subCatagory">
-		<br>
-		price:<br><input type="text" name="price" hint ="price of item">
-		<br>
-		<br>
-		quantity:<br><input type="number" name="quantity" hint ="price of item">
-		<br>
-		name:<br><input type="text" name="name" hint = "name of item">
-		<br>
-
-		<input type="submit" name="submit" value="Submit">
-
+<div class="body-content">
+  <div class="module">
+    <h1> WELCOME</h1>
+    <form class="form" action="/upload"  method="POST" enctype="multipart/form-data" autocomplete="off">
+       <div class="alert alert-error"></div>
+       <input type="text" placeholder="Name" name="name" required />
+       <input type="text" placeholder="Catagory" name="catagory" required />
+       <input type="text" placeholder="SubCatagory" name="subcatagory" required />
+       <input type="number" placeholder="Price" name="price" required />
+       <input type="number" placeholder="Quantity" name="quantity" required />
+       <input type="file" placeholder="image"   name="image" />
+      <input type="submit" value="Register" name="upload" class="btn btn-block btn-primary" />
     </form>
-    
-
+  </div>
+</div>
 </body>
 </html>

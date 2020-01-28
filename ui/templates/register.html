@@ -7,25 +7,38 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 	</head>
 <body>
-  <ui>
-  <li><a href="eCommerce.html">Home</a></li>
-  <li><a href="about.html">Home</a></li>
-  <li><a href="contact_us.html">Home</a></li>
+	<div class="bar">
+  <ul>
+  <li><a href="/eCommerce.html">Home</a></li>
+  <li><a href="upload.html">Upload</a></li>
+  <li><a href="/eCommerce.html">Logout</a></li>
   </ul>
+  </div>
   <div class="main-container">
     <div class="container">
       <div class="profile">
-				<div class="image-holder"><img class =""/> </div>
+				<div class="image-holder"><img class ="profilepic" src="assets/image/background2.jpg"/> </div>
 				<p>fullname</p>
 				<p>shopname</p>
 				<p>address</p>
-			</div>
+      </div>
+      <h2>Your Products</h2>
+      {{ range .}}
+      <div class="pill">
+				<div class="image-holder"><img src= "assets/image/{{ .Image}}"/> </div>
+					<div class="caption">
+						<p> Price {{ .Price}}</p>
+						<p> Name   {{ .Name}} </p>
+						<form method="POST" >
+			
+							<a href= "/item/update?id ={{ .ID}}" class="button">Update</a>
+					        <a href="/item/delete?id={{ .ID}}" class="button">Delete</a>
+						</form>
+					</div>
+               
+      </div>
+      {{ end }}
 		</div>
-  <img   src = "assets/image/background2.jpg"/>
-  <p>fullname </p>
-  <p>shopname </p>
-  <p>address </p>
-  </div>
   </div>
 </body>
 </html>

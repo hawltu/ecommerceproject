@@ -30,14 +30,14 @@ func (cs *ItemServiceImpl) Items() ([]entity.Item, error) {
 }
 
 // StoreItem persists new Item information
-func (cs *ItemServiceImpl) StoreItem(Item entity.Item) error {
+func (cs *ItemServiceImpl) StoreItem(item1 *entity.Item) (*entity.Item,[]error) {
 
-	err := cs.ItemRepo.StoreItem(Item)
+	itms,err := cs.ItemRepo.StoreItem(item1)
 
-	if err != nil {
-		return err
+	if len(err) > 0 {
+		return nil,err
 	}
-	return nil
+	return itms,nil
 }
 
 // Item returns a Item object with a given id

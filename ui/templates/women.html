@@ -1,27 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta content="Ethiopian" charset="utf-8" />
-		<title>eCommerce</title>
-		<link rel="stylesheet" href="ui/assets/css/category.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+    <title>eCommerce</title>
+    <link rel="stylesheet" href="assets/css/category.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 	</head>
 <body>
-<div class="bar">
-			<ul>
-				<li><a href="eCommerce.html">Home</a></li>
-				<li><a href="about.html">About</a></li>
-				<li><a href="contact_us.html">Contact Us</a></li>
-				<li><i class="fa fa-shopping-cart" style="font-size:36px;color:white"></i></li>
-			</ul>
+	<div class="bar">
+  <ul>
+  <li><a href="register1.html">Home</a></li>
+  <li><a href="upload.html">Upload</a></li>
+  </ul>
+  </div>
+  <div class="main-container">
+    <div class="container">
+      <h2>Main</h2>
+      {{ range .}}
+      <div class="pill">
+				<div class="image-holder"><img src= "assets/image/{{ .Image}}"/> </div>
+					<div class="caption">
+						<p> Price {{ .Price}}</p>
+            <p> Name   {{ .Name}} </p>
+            <p> Quantity {{ .Quantity}}</p>
+              <form method="POST" >
+                <a href= "/women/buy?id={{ .ID}}" class="button">BUY</a>
+              </form>
+				</div>
+      </div>
+      {{ end }}
 		</div>
-<div class="main_container">
-<div class="container">
-
-	</div>
-		
-</div>
-
+  </div>
 </body>
 </html>

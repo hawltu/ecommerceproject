@@ -26,7 +26,7 @@ func (cri *ItemRepositoryImpl) Items() ([]entity.Item, error) {
 
 	for rows.Next() {
 		item1 := entity.Item{}
-		err := rows.Scan(&item1.ID,&item1.Name ,&item1.Catagory,&item1.Subcatagory,&item1.Price,&item1.Quantity,&item1.Image)
+		err := rows.Scan(&item1.ID,&item1.Name ,&item1.Catagory,&item1.Subcatagory,&item1.Price,&item1.Quantity,&item1.Image,&item1.UserID)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +42,7 @@ func (cri *ItemRepositoryImpl) Item(id int) (entity.Item, error) {
 
 	row := cri.conn.QueryRow("SELECT * FROM Items WHERE id = $1", id)
 	item1 := entity.Item{}
-	err := row.Scan(&item1.ID,&item1.Name,&item1.Catagory,&item1.Subcatagory,&item1.Price,&item1.Quantity)
+	err := row.Scan(&item1.ID,&item1.Name,&item1.Catagory,&item1.Subcatagory,&item1.Price,&item1.Quantity,&item1.UserID)
 	if err != nil {
 		return item1, err
 	}
@@ -75,9 +75,9 @@ func (cri *ItemRepositoryImpl) DeleteItem(id int) error {
 
 
 
-func (cri *ItemRepositoryImpl) StoreItem(c entity.Item) error {
+func (cri *ItemRepositoryImpl) StoreItem(c *entity.Item) error {
 
-	_, err := cri.conn.Exec("INSERT INTO Items (name ,price,quantity, catagory,subcatagory) values($1, $2, $3,$4,$5)", c.Name, c.Price, c.Quantity, c.Catagory, c.Subcatagory)
+	_, err := cri.conn.Exec("INSERT INTO Items (name ,price,quantity, catagory,subcatagory) values($1, $2, $3,$4,$5)", &c.Name, &c.Price, &c.Quantity, &c.Catagory, &c.Subcatagory)
 	if err != nil {
 		return errors.New("Insertion has failed")
 	}

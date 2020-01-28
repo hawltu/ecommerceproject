@@ -3,6 +3,8 @@
 	padding:0;
 }
 
+
+
 .bar ul{
 	background-color:rgba(0,0,0,0.5);
 	text-align:center;
@@ -12,7 +14,7 @@
 }
 a{
 	text-decoration:none;
-	color:white;
+	color:black;
 }
 button{
 	float:left;
@@ -75,4 +77,15 @@ h2{
 
 	border-radius: 50%;
 	width:20%;
+}
+.button {
+    display: block;
+    width: 115px;
+    height: 25px;
+    background: rgb(223, 153, 2);
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
 }

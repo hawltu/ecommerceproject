@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<meta content="Ethiopian" charset="utf-8" />
+    <title>eCommerce</title>
+    <link href="//db.onlinewebfonts.com/c/a4e256ed67403c6ad5d43937ed48a77b?family=Core+Sans+N+W01+35+Light" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" href="assets/css/regiister.css" type="text/css">
+	</head>
+<body>
+<div class="body-content">
+  <div class="module">
+    <h1> WELCOME</h1>
+    <form class="form" action="/item/update"  method="POST" enctype="multipart/form-data" autocomplete="off">
+      <div class="alert alert-error"></div>
+      <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+      <input type="hidden" name="catid" value='{{ .Values.Get "catid" }}'/>
+       <input type="text" placeholder="Name" name="name"  id="name" value='{{ .Values.Get "name" }}' />
+       <input type="text" placeholder="Catagory" name="catagory" value='{{ .Values.Get "catagory" }}' />
+       <input type="text" placeholder="SubCatagory" name="subcatagory" value='{{ .Values.Get "subcatagory" }}' />
+       <input type="number" placeholder="Price" name="price" value='{{ .Values.Get "price" }}' />
+       <input type="number" placeholder="Quantity" name="quantity" value='{{ .Values.Get "quantity" }}' />
+       <input type="file" placeholder="image"   name="image"  value='{{ .Values.Get "image" }}'/>
+      <input type="submit" value="Register" name="upload" class="btn btn-block btn-primary" />
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+  <html>
+	<head>
+		<meta content="Ethiopian" charset="utf-8" />
+		<title>eCommerce</title>
+		<link href="//db.onlinewebfonts.com/c/a4e256ed67403c6ad5d43937ed48a77b?family=Core+Sans+N+W01+35+Light" rel="stylesheet" type="text/css"/>
+		<link rel="stylesheet" href="assets/css/register.css" type="text/css">
+	</head>
+<body>
+<div class="main-container">
+  <div class="container">
+    {{ with .}}
+    <form class="form" action="/buy"  method="POST" enctype="multipart/form-data" autocomplete="off">
+       <div class="alert alert-error"></div>
+       Name:
+       <input type="text" value="{{ .Name}}" name="name" />
+       Catagory:
+       <input type="text" value="{{ .Catagory}}" name="catagory" placeholder="{{.Catagory}}" />
+       Price:
+       <input type="number"  value="{{ .Price}}" name="price" placeholder="{{.Price}}"/>
+       Quantity:
+       <input type="number" value="{{ .Quantity}}" name="quantity" placeholder="{{ .Quantity}}"  />
+       <input  type="text"  placeholder="Name of buyeer"  name="nameB"/>
+       <input  type="text"  placeholder="phoneNumber"  name="phoneB"/>
+      <input type="submit" value="BUY" name="upload" class="btn btn-block btn-primary" />
+    </form>
+    {{ end }}
+  </div>
+</div>
+</body>
+</html>

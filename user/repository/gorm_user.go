@@ -70,6 +70,14 @@ func (uRepo *UserGormRepo) StoreUser(user *entity.User) (*entity.User, []error) 
 	return usr, errs
 }
 
+func (userRepo *UserGormRepo) UserByUserName(username string) (*entity.User, []error) {
+	user := entity.User{}
+	errs := userRepo.conn.Find(&user, "user_name=?", username).GetErrors()
+	if len(errs) > 0 {
+		return nil, errs
+	}
+	return &user, errs
+}
 // StoreSession stores a given session in the database
 func (uRepo *UserGormRepo) StoreSession(session *entity.UserSession) (*entity.UserSession, []error) {
 	s := session

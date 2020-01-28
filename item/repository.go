@@ -7,5 +7,5 @@ type ItemRepository interface {
 	Item(id int) (entity.Item, error)
 	UpdateItem(item entity.Item) error
 	DeleteItem(id int) error
-	StoreItem(item entity.Item) error
+	StoreItem(item *entity.Item) (*entity.Item,[]error)
 }

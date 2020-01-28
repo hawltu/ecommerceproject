@@ -8,6 +8,6 @@ type ItemService interface {
 	Item(id int) (entity.Item, error)
 	UpdateItem(user entity.Item) error
 	DeleteItem(id int) error
-	StoreItem(item entity.Item) error
+	StoreItem(item *entity.Item) (*entity.Item,[]error)
 }
 

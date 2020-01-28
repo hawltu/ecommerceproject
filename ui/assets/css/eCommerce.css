@@ -31,12 +31,12 @@ h1, h2{
 	padding-left:150px;
 	padding-top:50px;
 }
-.bar{
-	background-image:url("background.jpg");
+.background-image img{
 	height:600px;
-	background-size:cover;
-
+	width:100%;
+	background-size: cover;
 }
+
 .bar ul{
 	background-color:rgba(0,0,0,0.5);
 	text-align:center;
